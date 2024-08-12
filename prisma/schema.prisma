@@ -1,0 +1,104 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  clerkId      String        @unique
+  email        String        @unique
+  name         String?
+  phone        String?
+  role         Role          @default(STUDENT)
+  permissions  String[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  lessons      Lesson[]
+  quizzes      Quiz[]
+  quizAttempts QuizAttempt[]
+  categories   Category[]
+  tags         Tag[]
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  content     String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  quizzes     Quiz[]
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  tags        Tag[]
+}
+
+model Category {
+  id      String   @id @default(cuid())
+  name    String
+  userId  String
+  user    User     @relation(fields: [userId], references: [id])
+  lessons Lesson[]
+
+  @@unique([name, userId])
+}
+
+model Tag {
+  id      String   @id @default(cuid())
+  name    String
+  userId  String
+  user    User     @relation(fields: [userId], references: [id])
+  lessons Lesson[]
+
+  @@unique([name, userId])
+}
+
+model Quiz {
+  id        String        @id @default(cuid())
+  title     String
+  lessonId  String
+  lesson    Lesson        @relation(fields: [lessonId], references: [id])
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  questions Question[]
+  attempts  QuizAttempt[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model Question {
+  id            String   @id @default(cuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id])
+  questionText  String
+  options       String[]
+  correctAnswer String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model QuizAttempt {
+  id             String   @id @default(cuid())
+  quizId         String
+  quiz           Quiz     @relation(fields: [quizId], references: [id])
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  score          Int
+  totalQuestions Int
+  correctAnswers Int
+  wrongAnswers   Int
+  createdAt      DateTime @default(now())
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
