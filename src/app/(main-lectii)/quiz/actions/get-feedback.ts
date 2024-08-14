@@ -9,7 +9,7 @@ export async function getFeedback(score: number, lessonTitle: string): Promise<s
 
   try {
     const result = await generateText({
-      model: openai('gpt-4'), // You can change this to a different model if needed
+      model: openai('gpt-4o-2024-08-06'), // You can change this to a different model if needed
       prompt: prompt,
     });
 
