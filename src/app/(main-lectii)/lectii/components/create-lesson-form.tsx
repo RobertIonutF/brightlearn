@@ -1,7 +1,7 @@
 // src/app/lectii/components/create-lesson-form.tsx
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,13 +14,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/components/ui/use-toast";
 import { createLesson } from '../actions/create-lesson';
 import { Category, Tag } from '@prisma/client';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FileUploader } from './file-uploader';
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const lessonSchema = z.object({
   title: z.string().min(1, 'Titlul este obligatoriu').max(255, 'Titlul este prea lung'),
   description: z.string().min(1, 'Descrierea este obligatorie').max(1000, 'Descrierea este prea lungă'),
-  content: z.string().min(1, 'Conținutul este obligatoriu'),
+  content: z.string().min(1, 'Conținutul este obligatoriu').optional(),
   categoryId: z.string().min(1, 'Categoria este obligatorie'),
   tagIds: z.array(z.string()).min(1, 'Selectați cel puțin un tag'),
+  file: z
+    .custom<FileList>((val) => val instanceof FileList, 'Vă rugăm să încărcați un fișier')
+    .refine((files) => files.length === 0 || files.length === 1, 'Vă rugăm să încărcați un singur fișier')
+    .refine(
+      (files) => files.length === 0 || files[0].size <= MAX_FILE_SIZE,
+      'Dimensiunea maximă a fișierului este de 5MB'
+    )
+    .optional(),
 });
 
 type LessonFormValues = z.infer<typeof lessonSchema>;
@@ -32,6 +44,8 @@ interface CreateLessonFormProps {
 
 export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<"text" | "file">("text");
+
   const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonSchema),
     defaultValues: {
@@ -40,12 +54,25 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
       content: '',
       categoryId: '',
       tagIds: [],
+      file: undefined,
     },
   });
 
   const onSubmit = async (data: LessonFormValues) => {
     try {
-      await createLesson(data);
+      const formData = new FormData();
+      formData.append('title', data.title);
+      formData.append('description', data.description);
+      formData.append('categoryId', data.categoryId);
+      data.tagIds.forEach((tagId) => formData.append('tagIds', tagId));
+
+      if (activeTab === "text") {
+        formData.append('content', data.content || '');
+      } else if (data.file && data.file.length > 0) {
+        formData.append('file', data.file[0]);
+      }
+
+      await createLesson(formData);
       toast({
         title: "Lecție creată cu succes",
         description: "Noua lecție a fost adăugată în sistem.",
@@ -91,20 +118,47 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="content"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Conținut</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Introduceți conținutul lecției" {...field} className="min-h-[200px]" />
-              </FormControl>
-              <FormDescription>Conținutul complet al lecției</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "text" | "file")}>
+          <TabsList>
+            <TabsTrigger value="text">Text</TabsTrigger>
+            <TabsTrigger value="file">Fișier PDF</TabsTrigger>
+          </TabsList>
+          <TabsContent value="text">
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Conținut</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Introduceți conținutul lecției" {...field} className="min-h-[200px]" />
+                  </FormControl>
+                  <FormDescription>Conținutul complet al lecției</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </TabsContent>
+          <TabsContent value="file">
+            <Controller
+              name="file"
+              control={form.control}
+              render={({ field: { onChange, value, ...field } }) => (
+                <FormItem>
+                  <FormLabel>Încărcare fișier PDF</FormLabel>
+                  <FormControl>
+                    <FileUploader
+                      {...field}
+                      onChange={(files) => onChange(files)}
+                    />
+                  </FormControl>
+                  <FormDescription>Încărcați un fișier PDF cu conținutul lecției</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </TabsContent>
+        </Tabs>
         <FormField
           control={form.control}
           name="categoryId"

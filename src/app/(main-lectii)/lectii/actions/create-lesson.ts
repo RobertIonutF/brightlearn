@@ -1,19 +1,13 @@
-// /src/app/lectii/actions/create-lesson.ts
+// src/app/lectii/actions/create-lesson.ts
 "use server";
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { storage } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-interface CreateLessonData {
-  title: string;
-  description: string;
-  content: string;
-  categoryId: string;
-  tagIds: string[];
-}
-
-export async function createLesson(data: CreateLessonData) {
+export async function createLesson(formData: FormData) {
   const { userId } = auth();
 
   if (!userId) {
@@ -28,16 +22,32 @@ export async function createLesson(data: CreateLessonData) {
     throw new Error("User not found");
   }
 
+  const title = formData.get('title') as string;
+  const description = formData.get('description') as string;
+  const categoryId = formData.get('categoryId') as string;
+  const tagIds = formData.getAll('tagIds') as string[];
+  const content = formData.get('content') as string;
+  const file = formData.get('file') as File | null;
+
+  let fileUrl: string | null = null;
+
+  if (file) {
+    const fileRef = ref(storage, `lessons/${dbUser.id}/${Date.now()}_${file.name}`);
+    await uploadBytes(fileRef, file);
+    fileUrl = await getDownloadURL(fileRef);
+  }
+
   try {
     const lesson = await prisma.lesson.create({
       data: {
-        title: data.title,
-        description: data.description,
-        content: data.content,
+        title,
+        description,
+        content: content as string,
+        fileUrl,
         userId: dbUser.id,
-        categoryId: data.categoryId,
+        categoryId,
         tags: {
-          connect: data.tagIds.map((id) => ({ id })),
+          connect: tagIds.map((id) => ({ id })),
         },
       },
     });
