@@ -37,7 +37,7 @@ export function DeleteCategoryDialog({ categoryId, categoryName }: DeleteCategor
         <DialogHeader>
           <DialogTitle>Confirmă ștergerea</DialogTitle>
           <DialogDescription>
-            Ești sigur că vrei să ștergi categoria "{categoryName}"? Această acțiune nu poate fi anulată.
+            Ești sigur că vrei să ștergi categoria &qout;{categoryName}&qout;? Această acțiune nu poate fi anulată.
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-end space-x-2">

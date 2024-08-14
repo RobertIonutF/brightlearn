@@ -37,7 +37,7 @@ export function DeleteTagDialog({ tagId, tagName }: DeleteTagDialogProps) {
         <DialogHeader>
           <DialogTitle>Confirmă ștergerea</DialogTitle>
           <DialogDescription>
-            Ești sigur că vrei să ștergi tagul "{tagName}"? Această acțiune nu poate fi anulată.
+            Ești sigur că vrei să ștergi tagul &qout;{tagName}&qout;? Această acțiune nu poate fi anulată.
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-end space-x-2">
