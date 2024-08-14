@@ -5,13 +5,13 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Book, List, Star, PlusCircle, FileText, Grid, Tag } from 'lucide-react';
+import { Book, List, Star, PlusCircle, FileQuestion, Grid, Tag } from 'lucide-react';
 
 const sidebarItems = [
   { href: '/lectii', label: 'Toate Lecțiile', icon: List },
   { href: '/lectii/favorite', label: 'Lecții Favorite', icon: Star },
   { href: '/lectii/create', label: 'Creare Lecție', icon: PlusCircle },
-  { href: '/quiz', label: 'Quiz-uri', icon: FileText },
+  { href: '/quiz', label: 'Quiz-uri', icon: FileQuestion },
   { href: '/categorii', label: 'Gestionare Categorii', icon: Grid },
   { href: '/taguri', label: 'Gestionare Taguri', icon: Tag },
 ];

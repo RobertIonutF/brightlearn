@@ -1,6 +1,7 @@
 // src/app/lectii/[id]/page.tsx
 import React from "react";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -50,9 +51,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
           <Brain className="w-4 h-4" />
           <span>Învață cu AI</span>
         </Button>
-        <Button className="flex items-center space-x-2">
-          <FileQuestion className="w-4 h-4" />
-          <span>Generează Quiz pentru această Lecție</span>
+        <Button className="flex items-center space-x-2" asChild>
+          <Link href={`/quiz/create?lessonId=${lesson.id}`}>
+            <FileQuestion className="w-4 h-4" />
+            <span>Generează Quiz pentru această Lecție</span>
+          </Link>
         </Button>
       </div>
 
