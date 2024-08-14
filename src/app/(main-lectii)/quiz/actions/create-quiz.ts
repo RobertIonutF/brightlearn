@@ -48,6 +48,10 @@ export async function createQuiz(data: z.infer<typeof formSchema>) {
     throw new Error("Lesson not found");
   }
 
+  if(data.questionCount > 5 || data.questionCount < 1) {
+    throw new Error("Numărul maxim de întrebări este 5, iar minimul este 1");
+  }
+
   try {
     const result = await generateObject({
       model: openai('gpt-4o-2024-08-06', {

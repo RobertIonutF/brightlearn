@@ -178,7 +178,7 @@ export function QuizCreationForm({
                 />
               </FormControl>
               <FormDescription>
-                Selectează numărul de întrebări pentru quiz (între 1 și 30).
+                Selectează numărul de întrebări pentru quiz (între 1 și 5).
               </FormDescription>
               <FormMessage />
             </FormItem>

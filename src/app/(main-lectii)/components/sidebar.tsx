@@ -5,11 +5,11 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Book, List, Star, PlusCircle, FileQuestion, Grid, Tag } from 'lucide-react';
+import { Book, List, PlusCircle, FileQuestion, Grid, Tag, BarChart } from 'lucide-react';
 
 const sidebarItems = [
+  { href: '/dashboard', label: 'Dashboard', icon: BarChart },
   { href: '/lectii', label: 'Toate Lecțiile', icon: List },
-  { href: '/lectii/favorite', label: 'Lecții Favorite', icon: Star },
   { href: '/lectii/create', label: 'Creare Lecție', icon: PlusCircle },
   { href: '/quiz', label: 'Quiz-uri', icon: FileQuestion },
   { href: '/categorii', label: 'Gestionare Categorii', icon: Grid },
@@ -22,7 +22,7 @@ export function Sidebar() {
   return (
     <div className="w-64 bg-secondary h-full overflow-y-auto flex flex-col">
       <div className="p-4 border-b">
-        <Link href="/lectii" className="flex items-center space-x-2">
+        <Link href="/dashboard" className="flex items-center space-x-2">
           <Book className="h-6 w-6 text-primary" />
           <span className="text-xl font-bold">MediLearn</span>
         </Link>
