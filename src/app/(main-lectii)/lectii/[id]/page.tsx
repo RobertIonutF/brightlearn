@@ -1,15 +1,23 @@
 // src/app/lectii/[id]/page.tsx
-import React from 'react';
-import { notFound } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import React from "react";
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Brain, FileQuestion } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface LessonPageProps {
-  params: { id: string }
+  params: { id: string };
 }
 
 async function getLesson(id: string) {
@@ -56,7 +64,9 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <TabsContent value="content">
           <Card>
             <CardContent className="mt-4">
-              <p className="whitespace-pre-wrap">{lesson.content}</p>
+              <ScrollArea className="h-[400px] w-full rounded-md border p-4">
+                {lesson.content}
+              </ScrollArea>
             </CardContent>
           </Card>
         </TabsContent>
@@ -77,17 +87,26 @@ export default async function LessonPage({ params }: LessonPageProps) {
                   </TableRow>
                   <TableRow>
                     <TableCell>Tag-uri</TableCell>
-                    <TableCell>{lesson.tags.map(tag => tag.name).join(', ')}</TableCell>
+                    <TableCell>
+                      {lesson.tags.map((tag) => tag.name).join(", ")}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Data creării</TableCell>
-                    <TableCell>{new Date(lesson.createdAt).toLocaleDateString('ro-RO')}</TableCell>
+                    <TableCell>
+                      {new Date(lesson.createdAt).toLocaleDateString("ro-RO")}
+                    </TableCell>
                   </TableRow>
                   {lesson.fileUrl && (
                     <TableRow>
                       <TableCell>Fișier atașat</TableCell>
                       <TableCell>
-                        <a href={lesson.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                        <a
+                          href={lesson.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
                           Vizualizează PDF
                         </a>
                       </TableCell>

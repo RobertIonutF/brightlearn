@@ -4,7 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { storage } from "@/lib/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, deleteObject, getDownloadURL } from "firebase/storage";
+import PdfParse from "pdf-parse";
+import fs from "fs";
 
 export async function createLesson(formData: FormData) {
   try {
@@ -42,12 +44,28 @@ export async function createLesson(formData: FormData) {
       fileUrl = await getDownloadURL(fileRef);
       console.log("Fișier încărcat, URL:", fileUrl); 
 
-      // Extrage conținutul textual din PDF
       try {
-        console.log(fileUrl);
+        const fileRetrieved = await fetch(fileUrl);
+
+        if (!fileRetrieved.ok) {
+          throw new Error(`Cod de stare HTTP: ${fileRetrieved.status}`);
+        }
+
+        const pdfBuffer = await fileRetrieved.arrayBuffer();
+        const pdfData = Buffer.from(pdfBuffer);
+        const pdfText = await PdfParse(pdfData);
+
+        content = pdfText.text;
+        console.log("Text extras din PDF:", content);
       } catch (pdfError) {
         console.error("Eroare la extragerea textului din PDF:", pdfError);
         content = `Nu s-a putut extrage textul din PDF: ${file.name}. Eroare: ${pdfError}`;
+
+        // Șterge fișierul din Firebase daca nu s-a putut extrage textul
+        await deleteObject(fileRef);
+        console.log("Fișier șters din Firebase:", fileUrl);
+
+        throw new Error("Nu s-a putut extrage textul din PDF: " + (pdfError as Error).message);
       }
     }
 
@@ -55,7 +73,7 @@ export async function createLesson(formData: FormData) {
       data: {
         title,
         description,
-        content,
+        content: content || "",
         fileUrl,
         categoryId,
         userId: dbUser.id,
