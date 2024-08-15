@@ -4,9 +4,14 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { storage } from "@/lib/firebase";
-import { ref, uploadBytes, deleteObject, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  deleteObject,
+  getDownloadURL,
+} from "firebase/storage";
 import PdfParse from "pdf-parse";
-import fs from "fs";
+import { PDFDocument } from "pdf-lib";
 
 export async function createLesson(formData: FormData) {
   try {
@@ -24,28 +29,46 @@ export async function createLesson(formData: FormData) {
       throw new Error("Utilizator negăsit");
     }
 
-    const title = formData.get('title') as string;
-    const description = formData.get('description') as string;
-    const categoryId = formData.get('categoryId') as string;
-    const tagIds = formData.getAll('tagIds') as string[];
-    let content = formData.get('content') as string;
-    const file = formData.get('file') as File | null;
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const categoryId = formData.get("categoryId") as string;
+    const tagIds = formData.getAll("tagIds") as string[];
+    let content = formData.get("content") as string;
+    const file = formData.get("file") as File | null;
 
-    console.log("Date primite:", { title, description, categoryId, tagIds, content: content ? 'Conținut furnizat' : 'Fără conținut', file: file ? file.name : 'Fără fișier' });
+    console.log("Date primite:", {
+      title,
+      description,
+      categoryId,
+      tagIds,
+      content: content ? "Conținut furnizat" : "Fără conținut",
+      file: file ? file.name : "Fără fișier",
+    });
 
     let fileUrl: string | null = null;
 
     if (file) {
       // Încarcă fișierul în Firebase
       const env = process.env.NODE_ENV === "production" ? "prod" : "dev";
-      const fileRef = ref(storage, `${env}/lessons/${dbUser.id}/${Date.now()}_${file.name}`);
+      const fileRef = ref(
+        storage,
+        `${env}/lessons/${dbUser.id}/${Date.now()}_${file.name}`
+      );
       const buffer = await file.arrayBuffer();
       await uploadBytes(fileRef, buffer);
       fileUrl = await getDownloadURL(fileRef);
-      console.log("Fișier încărcat, URL:", fileUrl); 
+      console.log("Fișier încărcat, URL:", fileUrl);
 
       try {
         const fileRetrieved = await fetch(fileUrl);
+
+        //get the number of pages in the pdf
+        const pdfDoc = await PDFDocument.load(buffer);
+        const numPages = pdfDoc.getPageCount();
+
+        if (numPages > 150) {
+          throw new Error("PDF-ul are prea multe pagini (maxim 150)");
+        }
 
         if (!fileRetrieved.ok) {
           throw new Error(`Cod de stare HTTP: ${fileRetrieved.status}`);
@@ -65,7 +88,9 @@ export async function createLesson(formData: FormData) {
         await deleteObject(fileRef);
         console.log("Fișier șters din Firebase:", fileUrl);
 
-        throw new Error("Nu s-a putut extrage textul din PDF: " + (pdfError as Error).message);
+        throw new Error(
+          "Nu s-a putut extrage textul din PDF: " + (pdfError as Error).message
+        );
       }
     }
 
