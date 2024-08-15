@@ -29,6 +29,7 @@ import { createLesson } from "../actions/create-lesson";
 import { Category, Tag } from "@prisma/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileUploader } from "./file-uploader";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
@@ -282,7 +283,13 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isSubmitting}>
+        {categories.length === 0 || tags.length === 0 ? (
+          <AlertDialog>
+            Pentru a crea o lecție, trebuie să adăugați cel puțin o categorie și un tag.
+          </AlertDialog>
+        ) : null}
+        
+        <Button type="submit" disabled={isSubmitting || categories.length === 0 || tags.length === 0}>
           {isSubmitting ? "Se creează..." : "Creează Lecția"}
         </Button>
       </form>
