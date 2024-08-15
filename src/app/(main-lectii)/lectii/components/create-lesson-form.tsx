@@ -283,7 +283,7 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
             </FormItem>
           )}
         />
-        <div className="flex justify-end">
+        <div className="flex flex-col gap-2 items-center justify-center">
         {categories.length === 0 || tags.length === 0 ? (
           <AlertDialog>
             Pentru a crea o lecție, trebuie să adăugați cel puțin o categorie și un tag.
