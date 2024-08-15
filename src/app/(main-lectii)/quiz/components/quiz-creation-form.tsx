@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -26,6 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { createQuiz } from "../actions/create-quiz";
+import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   language: z.enum(["ro", "en"]),
@@ -50,6 +50,7 @@ export function QuizCreationForm({
   lessons,
   selectedLessonId,
 }: QuizCreationFormProps) {
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const router = useRouter();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -62,11 +63,12 @@ export function QuizCreationForm({
   });
 
   const onSubmit = async (data: FormValues) => {
+    setIsSubmitting(true);
     try {
       const quiz = await createQuiz(data);
       toast({
         title: "Quiz creat cu succes",
-        description: "Redirectare către pagina quiz-ului...",
+        description: "Redirectare către pagina quiz-ului, va rugam asteptati...",
       });
       router.push(`/quiz/${quiz.id}`);
     } catch (error) {
@@ -75,6 +77,8 @@ export function QuizCreationForm({
         description: "Vă rugăm să încercați din nou.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -184,7 +188,9 @@ export function QuizCreationForm({
             </FormItem>
           )}
         />
-        <Button type="submit">Generează Quiz</Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Se creează quiz-ul..." : "Creează quiz-ul"}
+        </Button>
       </form>
     </Form>
   );
