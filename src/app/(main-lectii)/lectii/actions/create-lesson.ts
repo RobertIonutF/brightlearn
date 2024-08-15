@@ -12,6 +12,13 @@ import {
 } from "firebase/storage";
 import PdfParse from "pdf-parse";
 import { PDFDocument } from "pdf-lib";
+import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
+import { generateObject } from "ai";
+
+const medicalPdfSchema = z.object({
+  medicalContent: z.boolean(),
+});
 
 export async function createLesson(formData: FormData) {
   try {
@@ -77,6 +84,18 @@ export async function createLesson(formData: FormData) {
         const pdfBuffer = await fileRetrieved.arrayBuffer();
         const pdfData = Buffer.from(pdfBuffer);
         const pdfText = await PdfParse(pdfData);
+
+        const result = await generateObject({
+          model: openai('gpt-4o-2024-08-06', {
+            structuredOutputs: true,
+          }),
+          schema: medicalPdfSchema,
+          prompt: `Verify if the content of the PDF file "${file.name}" is medical in nature. The content is: "${pdfText.text}"`,
+        });
+
+        if(!result.object.medicalContent) {
+          throw new Error("Conținutul PDF-ului nu este medical");
+        }
 
         content = pdfText.text;
         console.log("Text extras din PDF:", content);
