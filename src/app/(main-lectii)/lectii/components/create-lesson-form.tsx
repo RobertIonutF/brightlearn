@@ -283,6 +283,7 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
             </FormItem>
           )}
         />
+        <div className="flex justify-end">
         {categories.length === 0 || tags.length === 0 ? (
           <AlertDialog>
             Pentru a crea o lecție, trebuie să adăugați cel puțin o categorie și un tag.
@@ -292,6 +293,7 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
         <Button type="submit" disabled={isSubmitting || categories.length === 0 || tags.length === 0}>
           {isSubmitting ? "Se creează..." : "Creează Lecția"}
         </Button>
+        </div>
       </form>
     </Form>
   );
