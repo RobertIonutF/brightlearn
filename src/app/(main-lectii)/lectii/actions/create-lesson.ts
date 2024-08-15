@@ -73,8 +73,8 @@ export async function createLesson(formData: FormData) {
         const pdfDoc = await PDFDocument.load(buffer);
         const numPages = pdfDoc.getPageCount();
 
-        if (numPages > 150) {
-          throw new Error("PDF-ul are prea multe pagini (maxim 150)");
+        if (numPages > 125) {
+          throw new Error("PDF-ul are prea multe pagini (maxim 125)");
         }
 
         if (!fileRetrieved.ok) {
