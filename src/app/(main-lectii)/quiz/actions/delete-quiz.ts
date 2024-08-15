@@ -20,6 +20,20 @@ export async function deleteQuiz(quizId: string) {
     throw new Error("User not found");
   }
 
+  //check if the quiz belongs to the user
+  const quiz = await prisma.quiz.findUnique({
+    where: {
+      id: quizId,
+    },
+    select: {
+      userId: true,
+    },
+  });
+
+  if (!quiz || quiz.userId !== user.id) {
+    throw new Error("You don't have permission to delete this quiz");
+  }
+
   try {
     // Delete the quiz and its associated questions
     await prisma.quiz.delete({
@@ -32,6 +46,6 @@ export async function deleteQuiz(quizId: string) {
     revalidatePath('/quiz');
   } catch (error) {
     console.error("Error deleting quiz:", error);
-    throw new Error("Failed to delete quiz");
+    throw new Error("Error deleting quiz");
   }
 }

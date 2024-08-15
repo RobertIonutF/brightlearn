@@ -20,6 +20,15 @@ export async function updateCategory(data: z.infer<typeof schema>) {
 
   const validatedData = schema.parse(data);
 
+  const category = await prisma.category.findUnique({
+    where: { id: data.id },
+    select: { userId: true },
+  });
+
+  if (!category || category.userId !== userId) {
+    throw new Error("Nu aveți permisiunea de a șterge această categorie");
+  }
+
   try {
     await prisma.category.update({
       where: { id: validatedData.id },

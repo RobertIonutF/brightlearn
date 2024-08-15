@@ -20,6 +20,15 @@ export async function updateTag(data: z.infer<typeof schema>) {
 
   const validatedData = schema.parse(data);
 
+  const tag = await prisma.tag.findUnique({
+    where: { id: data.id },
+    select: { userId: true },
+  });
+
+  if (!tag || tag.userId !== userId) {
+    throw new Error("Nu aveți permisiunea de a șterge acest tag");
+  }
+
   try {
     await prisma.tag.update({
       where: { id: validatedData.id },

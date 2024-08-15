@@ -20,6 +20,20 @@ export async function submitQuizAnswers(quizId: string, userAnswers: Record<stri
     throw new Error("User not found");
   }
 
+  //check if the quizz belongs to the user
+  const quiz = await prisma.quiz.findUnique({
+    where: {
+      id: quizId,
+    },
+    select: {
+      userId: true,
+    },
+  });
+
+  if (!quiz || quiz.userId !== user.id) {
+    throw new Error("You don't have permission to submit answers for this quiz");
+  }
+
   try {
     const quiz = await prisma.quiz.findUnique({
       where: { id: quizId },

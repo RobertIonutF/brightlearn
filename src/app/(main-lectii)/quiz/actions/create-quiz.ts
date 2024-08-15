@@ -52,6 +52,20 @@ export async function createQuiz(data: z.infer<typeof formSchema>) {
     throw new Error("Numărul maxim de întrebări este 5, iar minimul este 1");
   }
 
+  //check if the lesson belongs to the user
+  const ownershipCheck = await prisma.lesson.findUnique({
+    where: {
+      id: data.lessonId,
+    },
+    select: {
+      userId: true,
+    },
+  });
+
+  if (!ownershipCheck || ownershipCheck.userId !== user.id) {
+    throw new Error("You don't have permission to create a quiz for this lesson");
+  }
+
   try {
     const result = await generateObject({
       model: openai('gpt-4o-2024-08-06', {

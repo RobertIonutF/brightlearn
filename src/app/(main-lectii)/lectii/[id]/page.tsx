@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Brain, FileQuestion } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { auth } from "@clerk/nextjs/server";
 
 interface LessonPageProps {
   params: { id: string };
@@ -33,7 +34,14 @@ async function getLesson(id: string) {
 }
 
 export default async function LessonPage({ params }: LessonPageProps) {
+  const user = auth();
+  const dbUser = await prisma.user.findUnique({
+    where: { clerkId: user.userId as string },
+  });
   const lesson = await getLesson(params.id);
+  if (lesson.userId !== dbUser?.id) {
+    notFound();
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">

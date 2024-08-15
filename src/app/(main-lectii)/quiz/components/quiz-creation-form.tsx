@@ -57,7 +57,7 @@ export function QuizCreationForm({
       language: "ro",
       lessonId: selectedLessonId || "",
       difficulty: "mediu",
-      questionCount: 10,
+      questionCount: 5,
     },
   });
 
@@ -172,9 +172,9 @@ export function QuizCreationForm({
                 <Input
                   type="number"
                   {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                  onChange={(e) => field.onChange(parseInt(e.target.value))}
                   min={1}
-                  max={30}
+                  max={5}
                 />
               </FormControl>
               <FormDescription>
