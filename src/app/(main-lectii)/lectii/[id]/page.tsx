@@ -47,9 +47,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
       </Card>
 
       <div className="flex space-x-4">
-        <Button className="flex items-center space-x-2">
-          <Brain className="w-4 h-4" />
-          <span>Învață cu AI</span>
+        <Button className="flex items-center space-x-2" asChild>
+          <Link href={`/lectii/${lesson.id}/ai`}>
+            <Brain className="w-4 h-4" />
+            <span>Învață cu AI</span>
+          </Link>
         </Button>
         <Button className="flex items-center space-x-2" asChild>
           <Link href={`/quiz/create?lessonId=${lesson.id}`}>
