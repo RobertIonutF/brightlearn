@@ -68,7 +68,8 @@ export function QuizCreationForm({
       const quiz = await createQuiz(data);
       toast({
         title: "Quiz creat cu succes",
-        description: "Redirectare către pagina quiz-ului, va rugam asteptati...",
+        description:
+          "Redirectare către pagina quiz-ului, va rugam asteptati...",
       });
       router.push(`/quiz/${quiz.id}`);
     } catch (error) {
@@ -188,9 +189,16 @@ export function QuizCreationForm({
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Se creează quiz-ul..." : "Creează quiz-ul"}
-        </Button>
+
+        {lessons.length > 0 ? (
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Se creează quiz-ul..." : "Creează quiz-ul"}
+          </Button>
+        ) : (
+          <p className="text-center">
+            Nu există lecții disponibile pentru a crea un quiz.
+          </p>
+        )}
       </form>
     </Form>
   );
