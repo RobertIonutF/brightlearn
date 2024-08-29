@@ -82,7 +82,7 @@ export async function createQuiz(data: z.infer<typeof formSchema>) {
         lessonId: lesson.id,
         userId: user.id,
         language: data.language,
-        timeLimit: data.timeLimit,
+        timeLimit: data.timeLimit !== 0 ? data.timeLimit : null,
         questions: {
           create: result.object.questions.map((q) => ({
             questionText: q.questionText,
