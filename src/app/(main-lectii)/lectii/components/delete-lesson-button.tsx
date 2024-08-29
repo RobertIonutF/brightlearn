@@ -20,9 +20,10 @@ import { deleteLesson } from '../actions/delete-lesson';
 
 interface DeleteLessonButtonProps {
   lessonId: string;
+  className?: string;
 }
 
-export function DeleteLessonButton({ lessonId }: DeleteLessonButtonProps) {
+export function DeleteLessonButton({ lessonId, className }: DeleteLessonButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
@@ -47,7 +48,7 @@ export function DeleteLessonButton({ lessonId }: DeleteLessonButtonProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">
+        <Button variant="destructive" className={className}>
           <Trash2 className="mr-2 h-4 w-4" /> Șterge Lecția
         </Button>
       </AlertDialogTrigger>

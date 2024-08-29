@@ -19,6 +19,7 @@ import { Brain, FileQuestion } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { auth } from "@clerk/nextjs/server";
 import { DeleteLessonButton } from '../components/delete-lesson-button';
+import { cn } from "@/lib/utils";
 
 interface LessonPageProps {
   params: { id: string };
@@ -63,53 +64,53 @@ export default async function LessonPage({ params }: LessonPageProps) {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-4 space-y-4 sm:p-6 sm:space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>{lesson.title}</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl">{lesson.title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>{lesson.description}</p>
+          <p className="text-sm sm:text-base">{lesson.description}</p>
         </CardContent>
       </Card>
 
-      <div className="flex space-x-4">
-        <Button className="flex items-center space-x-2" asChild>
+      <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
+        <Button className="flex items-center justify-center space-x-2 w-full sm:w-auto" asChild>
           <Link href={`/lectii/${lesson.id}/ai`}>
             <Brain className="w-4 h-4" />
             <span>Învață cu AI</span>
           </Link>
         </Button>
-        <Button className="flex items-center space-x-2" asChild>
+        <Button className="flex items-center justify-center space-x-2 w-full sm:w-auto" asChild>
           <Link href={`/quiz/create?lessonId=${lesson.id}`}>
             <FileQuestion className="w-4 h-4" />
-            <span>Generează Quiz pentru această Lecție</span>
+            <span>Generează Quiz</span>
           </Link>
         </Button>
-        <DeleteLessonButton lessonId={lesson.id} />
+        <DeleteLessonButton lessonId={lesson.id} className="w-full sm:w-auto" />
       </div>
 
-      <Tabs defaultValue="content">
-        <TabsList>
-          <TabsTrigger value="content">Conținut</TabsTrigger>
-          <TabsTrigger value="details">Detalii</TabsTrigger>
+      <Tabs defaultValue="content" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="content" className="flex-1">Conținut</TabsTrigger>
+          <TabsTrigger value="details" className="flex-1">Detalii</TabsTrigger>
         </TabsList>
         <TabsContent value="content">
           <Card>
-            <CardContent className="mt-4">
-              <ScrollArea className="h-[400px] w-full rounded-md border p-4">
-                {lesson.content}
+            <CardContent className="mt-4 p-0 sm:p-6">
+              <ScrollArea className="h-[300px] sm:h-[400px] w-full rounded-md border p-2 sm:p-4">
+                <div className="text-sm sm:text-base">{lesson.content}</div>
               </ScrollArea>
             </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="details">
           <Card>
-            <CardContent>
+            <CardContent className="p-2 sm:p-6">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Atribut</TableHead>
+                    <TableHead className="w-1/3">Atribut</TableHead>
                     <TableHead>Valoare</TableHead>
                   </TableRow>
                 </TableHeader>
