@@ -16,7 +16,6 @@ export async function createTag(data: z.infer<typeof schema>) {
   if (!userId) {
     throw new Error("Neautorizat");
   }
-
   const validatedData = schema.parse(data);
 
   const dbUser = await prisma.user.findUnique({

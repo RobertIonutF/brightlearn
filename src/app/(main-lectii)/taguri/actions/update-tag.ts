@@ -18,6 +18,14 @@ export async function updateTag(data: z.infer<typeof schema>) {
     throw new Error("Neautorizat");
   }
 
+  const dbUser = await prisma.user.findUnique({
+    where: { clerkId: userId },
+  });
+
+  if (!dbUser) {
+    throw new Error("Utilizator negăsit");
+  }
+
   const validatedData = schema.parse(data);
 
   const tag = await prisma.tag.findUnique({
@@ -25,7 +33,7 @@ export async function updateTag(data: z.infer<typeof schema>) {
     select: { userId: true },
   });
 
-  if (!tag || tag.userId !== userId) {
+  if (!tag || tag.userId !== dbUser.id) {
     throw new Error("Nu aveți permisiunea de a șterge acest tag");
   }
 

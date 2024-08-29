@@ -12,12 +12,20 @@ export async function deleteCategory(categoryId: string) {
     throw new Error("Neautorizat");
   }
 
+  const dbUser = await prisma.user.findUnique({
+    where: { clerkId: userId },
+  });
+
+  if (!dbUser) {
+    throw new Error("Utilizator negăsit");
+  }
+
   const category = await prisma.category.findUnique({
     where: { id: categoryId },
     select: { userId: true },
   });
 
-  if (!category || category.userId !== userId) {
+  if (!category || category.userId !== dbUser.id) {
     throw new Error("Nu aveți permisiunea de a șterge această categorie");
   }
 

@@ -284,15 +284,21 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
           )}
         />
         <div className="flex flex-col gap-2 items-center justify-center">
-        {categories.length === 0 || tags.length === 0 ? (
-          <AlertDialog>
-            Pentru a crea o lecție, trebuie să adăugați cel puțin o categorie și un tag.
-          </AlertDialog>
-        ) : null}
-        
-        <Button type="submit" disabled={isSubmitting || categories.length === 0 || tags.length === 0}>
-          {isSubmitting ? "Se creează..." : "Creează Lecția"}
-        </Button>
+          {categories.length === 0 || tags.length === 0 ? (
+            <AlertDialog>
+              Pentru a crea o lecție, trebuie să adăugați cel puțin o categorie
+              și un tag.
+            </AlertDialog>
+          ) : (
+            <Button
+              type="submit"
+              disabled={
+                isSubmitting
+              }
+            >
+              {isSubmitting ? "Se creează..." : "Creează Lecția"}
+            </Button>
+          )}
         </div>
       </form>
     </Form>

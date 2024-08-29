@@ -18,6 +18,14 @@ export async function updateCategory(data: z.infer<typeof schema>) {
     throw new Error("Neautorizat");
   }
 
+  const dbUser = await prisma.user.findUnique({
+    where: { clerkId: userId },
+  });
+
+  if (!dbUser) {
+    throw new Error("Utilizator negăsit");
+  }
+
   const validatedData = schema.parse(data);
 
   const category = await prisma.category.findUnique({
@@ -25,7 +33,7 @@ export async function updateCategory(data: z.infer<typeof schema>) {
     select: { userId: true },
   });
 
-  if (!category || category.userId !== userId) {
+  if (!category || category.userId !== dbUser.id) {
     throw new Error("Nu aveți permisiunea de a șterge această categorie");
   }
 

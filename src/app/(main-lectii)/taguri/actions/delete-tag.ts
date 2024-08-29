@@ -11,13 +11,21 @@ export async function deleteTag(tagId: string) {
   if (!userId) {
     throw new Error("Neautorizat");
   }
+
+  const dbUser = await prisma.user.findUnique({
+    where: { clerkId: userId },
+  });
+
+  if (!dbUser) {
+    throw new Error("Utilizator negăsit");
+  }
   
   const tag = await prisma.tag.findUnique({
     where: { id: tagId },
     select: { userId: true },
   });
 
-  if (!tag || tag.userId !== userId) {
+  if (!tag || tag.userId !== dbUser.id) {
     throw new Error("Nu aveți permisiunea de a șterge acest tag");
   }
 
