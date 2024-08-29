@@ -9,8 +9,8 @@ import { SearchAndFilter } from './components/search-and-filters';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const metadata = {
-  title: 'Lecții | MediLearn',
-  description: 'Explorează lista ta de lecții medicale interactive.',
+  title: 'Lecții | BrightLearn',
+  description: 'Explorează lista ta de lecții interactive.',
 };
 
 const ITEMS_PER_PAGE = 10;

@@ -20,20 +20,26 @@ const chartConfig = {
 };
 
 export function ScoreDistributionChart({ quizAttempts }: ScoreDistributionChartProps) {
-  const distribution = quizAttempts.reduce((acc, attempt) => {
-    const score = (attempt.correctAnswers / attempt.totalQuestions) * 100;
-    if (score <= 20) acc['0-20']++;
-    else if (score <= 40) acc['21-40']++;
-    else if (score <= 60) acc['41-60']++;
-    else if (score <= 80) acc['61-80']++;
-    else acc['81-100']++;
-    return acc;
-  }, { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 });
+  const distribution: Record<string, number> = React.useMemo(() => {
+    return quizAttempts.reduce((acc, attempt) => {
+      const score = (attempt.correctAnswers / attempt.totalQuestions) * 100;
+      if (score <= 20) acc['0-20']++;
+      else if (score <= 40) acc['21-40']++;
+      else if (score <= 60) acc['41-60']++;
+      else if (score <= 80) acc['61-80']++;
+      else acc['81-100']++;
+      return acc;
+    }, { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 });
+  }, [quizAttempts]);
 
-  const data = Object.entries(distribution).map(([name, value]) => ({ name, value }));
+  const data = React.useMemo(() => {
+    return Object.entries(distribution)
+      .map(([name, value]): { name: string; value: number } => ({ name, value }))
+      .filter(item => item.value > 0); // Only include non-zero values
+  }, [distribution]);
 
   return (
-    <ChartContainer config={chartConfig} className="h-[300px] w-full">
+    <ChartContainer config={chartConfig} className="h-full w-full">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -41,7 +47,8 @@ export function ScoreDistributionChart({ quizAttempts }: ScoreDistributionChartP
             cx="50%"
             cy="50%"
             labelLine={false}
-            outerRadius={80}
+            outerRadius="80%"
+            innerRadius="40%"
             fill="#8884d8"
             dataKey="value"
           >
@@ -50,7 +57,12 @@ export function ScoreDistributionChart({ quizAttempts }: ScoreDistributionChartP
             ))}
           </Pie>
           <ChartTooltip content={<ChartTooltipContent />} />
-          <Legend />
+          <Legend 
+            layout="horizontal" 
+            verticalAlign="bottom" 
+            align="center"
+            wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
+          />
         </PieChart>
       </ResponsiveContainer>
     </ChartContainer>

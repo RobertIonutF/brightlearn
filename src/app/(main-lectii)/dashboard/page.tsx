@@ -11,8 +11,8 @@ import { TimeProgressChart } from './components/time-progress-chart';
 import { getOverallFeedback } from './actions/get-overall-feedback';
 
 export const metadata = {
-  title: 'Dashboard | MediLearn',
-  description: 'Vizualizează progresul tău general și statistici în MediLearn.',
+  title: 'Dashboard | BrightLearn',
+  description: 'Vizualizează progresul tău general și statistici în BrightLearn.',
 };
 
 async function getDashboardData(userId: string) {
@@ -59,81 +59,85 @@ export default async function DashboardPage() {
   const overallFeedback = await getOverallFeedback(overallScore, quizAttempts.length);
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
+    <div className="container mx-auto p-4 space-y-6">
+      <h1 className="text-2xl md:text-3xl font-bold">Dashboard</h1>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Score cards */}
+        <Card className="col-span-full sm:col-span-1">
           <CardHeader>
             <CardTitle>Scor General</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{overallScore.toFixed(2)}%</p>
+            <p className="text-2xl md:text-3xl font-bold">{overallScore.toFixed(2)}%</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="col-span-full sm:col-span-1">
           <CardHeader>
             <CardTitle>Total Quiz-uri</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{quizAttempts.length}</p>
+            <p className="text-2xl md:text-3xl font-bold">{quizAttempts.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="col-span-full sm:col-span-1 lg:col-span-1">
           <CardHeader>
             <CardTitle>Feedback AI</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>{overallFeedback}</p>
+            <p className="text-sm">{overallFeedback}</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Progres în Timp</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TimeProgressChart quizAttempts={quizAttempts as any} />
-        </CardContent>
-      </Card>
+      {/* Charts */}
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Progres în Timp</CardTitle>
+          </CardHeader>
+          <CardContent className="h-64 md:h-80">
+            <TimeProgressChart quizAttempts={quizAttempts as any} />
+          </CardContent>
+        </Card>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Progres General</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <OverallProgressChart quizAttempts={quizAttempts} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Distribuția Scorurilor</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ScoreDistributionChart quizAttempts={quizAttempts} />
-          </CardContent>
-        </Card>
-      </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Progres General</CardTitle>
+            </CardHeader>
+            <CardContent className="h-64">
+              <OverallProgressChart quizAttempts={quizAttempts} />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Distribuția Scorurilor</CardTitle>
+            </CardHeader>
+            <CardContent className="h-64">
+              <ScoreDistributionChart quizAttempts={quizAttempts} />
+            </CardContent>
+          </Card>
+        </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Performanță pe Categorii</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CategoryPerformanceChart quizAttempts={quizAttempts} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Performanță pe Tag-uri</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TagPerformanceChart quizAttempts={quizAttempts} />
-          </CardContent>
-        </Card>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Performanță pe Categorii</CardTitle>
+            </CardHeader>
+            <CardContent className="h-64">
+              <CategoryPerformanceChart quizAttempts={quizAttempts} />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Performanță pe Tag-uri</CardTitle>
+            </CardHeader>
+            <CardContent className="h-64">
+              <TagPerformanceChart quizAttempts={quizAttempts} />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
