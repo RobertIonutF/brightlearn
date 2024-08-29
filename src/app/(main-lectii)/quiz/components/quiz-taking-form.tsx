@@ -20,13 +20,32 @@ interface Question {
 interface QuizTakingFormProps {
   quizId: string;
   questions: Question[];
+  timeLimit: number | null;
 }
 
-export function QuizTakingForm({ quizId, questions }: QuizTakingFormProps) {
+export function QuizTakingForm({ quizId, questions, timeLimit }: QuizTakingFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [timeRemaining, setTimeRemaining] = React.useState(timeLimit ? timeLimit * 60 : null);
   const router = useRouter();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
+
+  React.useEffect(() => {
+    if (timeRemaining === null) return;
+
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev === null || prev <= 0) {
+          clearInterval(timer);
+          handleSubmit();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeRemaining]);
 
   // Shuffle options for the current question
   const shuffledOptions = React.useMemo(() => {
@@ -74,9 +93,13 @@ export function QuizTakingForm({ quizId, questions }: QuizTakingFormProps) {
       setIsSubmitting(false);
     }
   };
-
   return (
     <div className="space-y-6">
+      {timeRemaining !== null && (
+        <div className="text-right">
+          Timp rămas: {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, '0')}
+        </div>
+      )}
       <Card>
         <CardHeader>
           <CardTitle>

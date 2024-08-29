@@ -22,6 +22,7 @@ const formSchema = z.object({
   lessonId: z.string(),
   language: z.enum(["ro", "en"]),
   difficulty: z.enum(['ușor', 'mediu', 'dificil']),
+  timeLimit: z.number().min(1).max(30),
   questionCount: z.number().min(1).max(30),
 });
 
@@ -80,6 +81,8 @@ export async function createQuiz(data: z.infer<typeof formSchema>) {
         title: `Quiz pentru ${lesson.title}`,
         lessonId: lesson.id,
         userId: user.id,
+        language: data.language,
+        timeLimit: data.timeLimit,
         questions: {
           create: result.object.questions.map((q) => ({
             questionText: q.questionText,
