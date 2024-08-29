@@ -20,14 +20,14 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="w-64 bg-secondary h-full overflow-y-auto flex flex-col">
-      <div className="p-4 border-b">
+    <div className="bg-secondary w-full md:w-64 md:min-h-screen flex flex-col">
+      <div className="p-4 border-b border-secondary-foreground/10">
         <Link href="/dashboard" className="flex items-center space-x-2">
           <Book className="h-6 w-6 text-primary" />
           <span className="text-xl font-bold">BrightLearn</span>
         </Link>
       </div>
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {sidebarItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -35,10 +35,10 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center space-x-3 px-4 py-2 rounded-md transition-colors",
+                "flex items-center space-x-3 px-3 py-2 rounded-md transition-colors",
                 pathname === item.href
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-primary/10 dark:hover:bg-primary/20"
+                  : "text-secondary-foreground hover:bg-secondary-foreground/10"
               )}
             >
               <Icon className="h-5 w-5" />
