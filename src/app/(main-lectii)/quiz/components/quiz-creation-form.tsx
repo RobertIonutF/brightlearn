@@ -181,7 +181,7 @@ export function QuizCreationForm({
                   type="number"
                   {...field}
                   onChange={(e) => field.onChange(parseInt(e.target.value))}
-                  min={1}
+                  min={0}
                   max={30}
                 />
               </FormControl>
