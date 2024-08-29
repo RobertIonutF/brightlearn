@@ -11,26 +11,26 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "MediLearn - Învățare Medicală Interactivă",
-    template: "%s | MediLearn"
+    default: "BrightLearn - Învățare Interactivă cu AI",
+    template: "%s | BrightLearn"
   },
-  description: "Platformă de învățare medicală care transformă PDF-uri în lecții interactive și quiz-uri pentru studenți și profesioniști în domeniul medical.",
-  keywords: ["învățare medicală", "educație medicală", "quiz medical", "studiu medical interactiv"],
-  authors: [{ name: "MediLearn Team" }],
-  creator: "MediLearn",
+  description: "Platformă de învățare interactivă care transformă orice subiect în lecții interactive și quiz-uri cu ajutorul AI.",
+  keywords: ["învățare interactivă", "educație online", "quiz-uri personalizate", "AI pentru învățare"],
+  authors: [{ name: "BrightLearn Team" }],
+  creator: "BrightLearn",
   openGraph: {
     type: "website",
     locale: "ro_RO",
-    url: "https://medilearn.ro",
-    title: "MediLearn - Învățare Medicală Interactivă",
-    description: "Transformă studiul medical cu lecții interactive și quiz-uri personalizate.",
-    siteName: "MediLearn",
+    url: "https://brightlearn.ro",
+    title: "BrightLearn - Învățare Interactivă cu AI",
+    description: "Transformă modul în care înveți cu lecții interactive, chat AI și quiz-uri personalizate.",
+    siteName: "BrightLearn",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MediLearn - Învățare Medicală Interactivă",
-    description: "Transformă studiul medical cu lecții interactive și quiz-uri personalizate.",
-    creator: "@medilearn",
+    title: "BrightLearn - Învățare Interactivă cu AI",
+    description: "Transformă modul în care înveți cu lecții interactive, chat AI și quiz-uri personalizate.",
+    creator: "@brightlearn",
   },
   robots: {
     index: true,

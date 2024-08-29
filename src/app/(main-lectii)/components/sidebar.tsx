@@ -24,7 +24,7 @@ export function Sidebar() {
       <div className="p-4 border-b">
         <Link href="/dashboard" className="flex items-center space-x-2">
           <Book className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold">MediLearn</span>
+          <span className="text-xl font-bold">BrightLearn</span>
         </Link>
       </div>
       <nav className="flex-1 p-4 space-y-2">
