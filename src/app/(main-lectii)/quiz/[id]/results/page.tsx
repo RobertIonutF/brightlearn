@@ -1,7 +1,7 @@
-// src/app/quiz/[id]/results/page.tsx
 import React from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { Metadata, ResolvingMetadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,10 +10,9 @@ import { QuizResultsChart } from '../../components/quiz-results-chart';
 import { QuestionFeedback } from '../../components/question-feedback';
 import { getQuizFeedback } from '../../actions/get-quiz-feedback';
 
-export const metadata = {
-  title: 'Rezultate Quiz | MediLearn',
-  description: 'Vizualizează rezultatele și feedback-ul pentru quiz-ul tău.',
-};
+interface QuizResultsPageProps {
+  params: { id: string };
+}
 
 async function getQuizResults(quizId: string, userId: string) {
   const quizAttempt = await prisma.quizAttempt.findFirst({
@@ -51,9 +50,31 @@ async function getQuizResults(quizId: string, userId: string) {
   return quizAttempt;
 }
 
-export default async function QuizResultsPage({ params }: { params: { id: string } }) {
+export async function generateMetadata(
+  { params }: QuizResultsPageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
   const { userId } = auth();
+  if (!userId) throw new Error("Utilizator neautentificat");
   
+  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  if (!user) throw new Error("Utilizator negăsit în baza de date");
+
+  const quizResults = await getQuizResults(params.id, user.id);
+  
+  return {
+    title: `Rezultate Quiz: ${quizResults.quiz.title} | BrightLearn`,
+    description: `Vizualizează rezultatele și feedback-ul pentru quiz-ul "${quizResults.quiz.title}".`,
+    openGraph: {
+      title: `Rezultate Quiz: ${quizResults.quiz.title} | BrightLearn`,
+      description: `Vizualizează rezultatele și feedback-ul pentru quiz-ul "${quizResults.quiz.title}".`,
+      type: 'article',
+    },
+  };
+}
+
+export default async function QuizResultsPage({ params }: QuizResultsPageProps) {
+  const { userId } = auth();
   if (!userId) {
     throw new Error("Utilizator neautentificat");
   }

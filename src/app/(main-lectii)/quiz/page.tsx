@@ -1,6 +1,6 @@
-// src/app/quiz/page.tsx
 import React from 'react';
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import { QuizTable } from './components/quiz-table';
@@ -8,9 +8,14 @@ import { Pagination } from '@/components/ui/pagination';
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
-export const metadata = {
-  title: 'Quiz-uri | MediLearn',
+export const metadata: Metadata = {
+  title: 'Quiz-uri | BrightLearn',
   description: 'Vizualizează și creează quiz-uri în aplicația MediLearn.',
+  openGraph: {
+    title: 'Quiz-uri | BrightLearn',
+    description: 'Vizualizează și creează quiz-uri în aplicația MediLearn.',
+    type: 'website',
+  },
 };
 
 interface SearchParams {

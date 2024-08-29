@@ -1,5 +1,6 @@
 // /src/app/lectii/page.tsx
 import React from 'react';
+import { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import { LessonTable } from './components/lesson-table';
@@ -8,9 +9,14 @@ import { Pagination } from './components/pagination';
 import { SearchAndFilter } from './components/search-and-filters';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Lecții | BrightLearn',
   description: 'Explorează lista ta de lecții interactive.',
+  openGraph: {
+    title: 'Lecții | BrightLearn',
+    description: 'Explorează lista ta de lecții interactive.',
+    type: 'website',
+  },
 };
 
 const ITEMS_PER_PAGE = 10;
@@ -84,34 +90,27 @@ export default async function LectiiPage({
     throw new Error("User not found in database");
   }
 
-  try {
-    const [{ lessons, totalPages, currentPage }, categories, tags] = await Promise.all([
-      getLessons(user.id, searchParams),
-      getCategories(user.id),
-      getTags(user.id)
-    ]);
+  const { lessons, totalPages, currentPage } = await getLessons(user.id, searchParams);
+  const categories = await getCategories(user.id);
+  const tags = await getTags(user.id);
 
-    return (
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold">Lecțiile Mele</h1>
-        <SearchAndFilter categories={categories} tags={tags} />
-        <Tabs defaultValue="table" className="w-full">
-          <TabsList>
-            <TabsTrigger value="table">Tabel</TabsTrigger>
-            <TabsTrigger value="cards">Carduri</TabsTrigger>
-          </TabsList>
-          <TabsContent value="table">
-            <LessonTable lessons={lessons} />
-          </TabsContent>
-          <TabsContent value="cards">
-            <LessonCards lessons={lessons} />
-          </TabsContent>
-        </Tabs>
-        <Pagination currentPage={currentPage} totalPages={totalPages} />
-      </div>
-    );
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return <div>An error occurred while fetching data. Please try again later.</div>;
-  }
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Lecțiile Mele</h1>
+      <SearchAndFilter categories={categories} tags={tags} />
+      <Tabs defaultValue="table" className="w-full">
+        <TabsList>
+          <TabsTrigger value="table">Tabel</TabsTrigger>
+          <TabsTrigger value="cards">Carduri</TabsTrigger>
+        </TabsList>
+        <TabsContent value="table">
+          <LessonTable lessons={lessons} />
+        </TabsContent>
+        <TabsContent value="cards">
+          <LessonCards lessons={lessons} />
+        </TabsContent>
+      </Tabs>
+      <Pagination currentPage={currentPage} totalPages={totalPages} />
+    </div>
+  );
 }

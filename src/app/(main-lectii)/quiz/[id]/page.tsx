@@ -2,6 +2,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { Metadata, ResolvingMetadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,10 +10,9 @@ import { Button } from "@/components/ui/button";
 import { DeleteQuizButton } from '../components/delete-quiz-button';
 import { Play, ArrowLeft } from "lucide-react";
 
-export const metadata = {
-  title: 'Detalii Quiz | MediLearn',
-  description: 'Vizualizează detaliile unui quiz și începe sau șterge quiz-ul.',
-};
+interface QuizPageProps {
+  params: { id: string };
+}
 
 async function getQuiz(id: string, userId: string) {
   const quiz = await prisma.quiz.findUnique({
@@ -38,20 +38,35 @@ async function getQuiz(id: string, userId: string) {
   return quiz;
 }
 
-export default async function QuizPage({ params }: { params: { id: string } }) {
+export async function generateMetadata(
+  { params }: QuizPageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
   const { userId } = auth();
+  if (!userId) throw new Error("Utilizator neautentificat");
   
-  if (!userId) {
-    throw new Error("Utilizator neautentificat");
-  }
+  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  if (!user) throw new Error("Utilizator negăsit în baza de date");
 
-  const user = await prisma.user.findUnique({
-    where: { clerkId: userId },
-  });
+  const quiz = await getQuiz(params.id, user.id);
+  
+  return {
+    title: `${quiz.title} | BrightLearn`,
+    description: `Vizualizează detaliile quiz-ului "${quiz.title}" și începe sau șterge quiz-ul.`,
+    openGraph: {
+      title: `${quiz.title} | BrightLearn`,
+      description: `Vizualizează detaliile quiz-ului "${quiz.title}" și începe sau șterge quiz-ul.`,
+      type: 'article',
+    },
+  };
+}
 
-  if (!user) {
-    throw new Error("Utilizator negăsit în baza de date");
-  }
+export default async function QuizPage({ params }: QuizPageProps) {
+  const { userId } = auth();
+  if (!userId) throw new Error("Utilizator neautentificat");
+
+  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  if (!user) throw new Error("Utilizator negăsit în baza de date");
 
   const quiz = await getQuiz(params.id, user.id);
 
@@ -83,7 +98,7 @@ export default async function QuizPage({ params }: { params: { id: string } }) {
         </CardHeader>
         <CardContent>
           <ul className="list-disc pl-5">
-            {quiz.questions.map((question, index) => (
+            {quiz.questions.map((question) => (
               <li key={question.id} className="mb-2">
                 {question.questionText}
               </li>

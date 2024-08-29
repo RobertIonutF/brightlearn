@@ -1,15 +1,14 @@
-// src/app/quiz/[id]/start/page.tsx
 import React from 'react';
 import { notFound } from 'next/navigation';
+import { Metadata, ResolvingMetadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import { QuizTakingForm } from '../../components/quiz-taking-form';
 import { rephraseQuestions } from '../../actions/rephrase-questions';
 
-export const metadata = {
-  title: 'Luare Quiz | MediLearn',
-  description: 'Răspunde la întrebările din quiz și testează-ți cunoștințele.',
-};
+interface QuizTakingPageProps {
+  params: { id: string };
+}
 
 async function getQuiz(id: string, userId: string) {
   const quiz = await prisma.quiz.findUnique({
@@ -29,9 +28,31 @@ async function getQuiz(id: string, userId: string) {
   return quiz;
 }
 
-export default async function QuizTakingPage({ params }: { params: { id: string } }) {
+export async function generateMetadata(
+  { params }: QuizTakingPageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
   const { userId } = auth();
+  if (!userId) throw new Error("Utilizator neautentificat");
   
+  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  if (!user) throw new Error("Utilizator negăsit în baza de date");
+
+  const quiz = await getQuiz(params.id, user.id);
+  
+  return {
+    title: `Luare Quiz: ${quiz.title} | BrightLearn`,
+    description: `Răspunde la întrebările din quiz-ul "${quiz.title}" și testează-ți cunoștințele.`,
+    openGraph: {
+      title: `Luare Quiz: ${quiz.title} | BrightLearn`,
+      description: `Răspunde la întrebările din quiz-ul "${quiz.title}" și testează-ți cunoștințele.`,
+      type: 'article',
+    },
+  };
+}
+
+export default async function QuizTakingPage({ params }: QuizTakingPageProps) {
+  const { userId } = auth();
   if (!userId) {
     throw new Error("Utilizator neautentificat");
   }

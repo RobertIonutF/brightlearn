@@ -1,7 +1,7 @@
-// src/app/quiz/[id]/stats/page.tsx
 import React from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { Metadata, ResolvingMetadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,10 +12,9 @@ import { QuizQuestionPerformance } from '../../components/quiz-question-performa
 import { QuestionFeedback } from '../../components/question-feedback';
 import { getQuizFeedback } from '../../actions/get-quiz-feedback';
 
-export const metadata = {
-  title: 'Statistici Quiz | MediLearn',
-  description: 'Vizualizează statisticile și performanța pentru acest quiz.',
-};
+interface QuizStatsPageProps {
+  params: { id: string };
+}
 
 async function getQuizStats(quizId: string, userId: string) {
   const quiz = await prisma.quiz.findUnique({
@@ -58,20 +57,35 @@ async function getQuizStats(quizId: string, userId: string) {
   return quiz;
 }
 
-export default async function QuizStatsPage({ params }: { params: { id: string } }) {
+export async function generateMetadata(
+  { params }: QuizStatsPageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
   const { userId } = auth();
+  if (!userId) throw new Error("Utilizator neautentificat");
   
-  if (!userId) {
-    throw new Error("Utilizator neautentificat");
-  }
+  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  if (!user) throw new Error("Utilizator negăsit în baza de date");
 
-  const user = await prisma.user.findUnique({
-    where: { clerkId: userId },
-  });
+  const quizStats = await getQuizStats(params.id, user.id);
+  
+  return {
+    title: `Statistici Quiz: ${quizStats.title} | BrightLearn`,
+    description: `Vizualizează statisticile și performanța pentru quiz-ul "${quizStats.title}".`,
+    openGraph: {
+      title: `Statistici Quiz: ${quizStats.title} | BrightLearn`,
+      description: `Vizualizează statisticile și performanța pentru quiz-ul "${quizStats.title}".`,
+      type: 'article',
+    },
+  };
+}
 
-  if (!user) {
-    throw new Error("Utilizator negăsit în baza de date");
-  }
+export default async function QuizStatsPage({ params }: QuizStatsPageProps) {
+  const { userId } = auth();
+  if (!userId) throw new Error("Utilizator neautentificat");
+
+  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  if (!user) throw new Error("Utilizator negăsit în baza de date");
 
   const quizStats = await getQuizStats(params.id, user.id);
   const latestAttempt = quizStats.attempts[0];

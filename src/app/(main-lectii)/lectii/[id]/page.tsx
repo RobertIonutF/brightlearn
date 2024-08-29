@@ -2,6 +2,7 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Metadata, ResolvingMetadata } from 'next';
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -32,6 +33,23 @@ async function getLesson(id: string) {
   if (!lesson) notFound();
 
   return lesson;
+}
+
+export async function generateMetadata(
+  { params }: LessonPageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const lesson = await getLesson(params.id);
+  
+  return {
+    title: `${lesson.title} | Your App Name`,
+    description: lesson.description,
+    openGraph: {
+      title: lesson.title,
+      description: lesson.description,
+      type: 'article',
+    },
+  };
 }
 
 export default async function LessonPage({ params }: LessonPageProps) {
@@ -68,7 +86,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <span>Generează Quiz pentru această Lecție</span>
           </Link>
         </Button>
-        <DeleteLessonButton lessonId={lesson.id} />
       </div>
 
       <Tabs defaultValue="content">
