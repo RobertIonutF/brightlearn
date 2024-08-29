@@ -22,7 +22,7 @@ const formSchema = z.object({
   lessonId: z.string(),
   language: z.enum(["ro", "en"]),
   difficulty: z.enum(['ușor', 'mediu', 'dificil']),
-  timeLimit: z.number().min(1).max(30),
+  timeLimit: z.number().min(0).max(30),
   questionCount: z.number().min(1).max(30),
 });
 
@@ -73,7 +73,7 @@ export async function createQuiz(data: z.infer<typeof formSchema>) {
         structuredOutputs: true,
       }),
       schema: quizSchema,
-      prompt: `Create a ${data.difficulty} quiz with ${data.questionCount} questions based on the following lesson content: "${lesson.content}" Language: ${data.language}`,
+      prompt: `Create a ${data.difficulty} quiz with ${data.questionCount} questions based on the following lesson content: "${lesson.content}" Language: ${data.language} for a time limit of ${data.timeLimit} minutes`,
     });
 
     const quiz = await prisma.quiz.create({

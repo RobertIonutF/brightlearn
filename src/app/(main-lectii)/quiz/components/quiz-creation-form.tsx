@@ -31,7 +31,7 @@ const formSchema = z.object({
   language: z.enum(["ro", "en"]),
   lessonId: z.string().min(1, "Selectați o lecție"),
   difficulty: z.enum(["ușor", "mediu", "dificil"]),
-  timeLimit: z.number().min(1).max(30),
+  timeLimit: z.number().min(0).max(30),
   questionCount: z.number().min(1).max(30),
 });
 
@@ -61,6 +61,7 @@ export function QuizCreationForm({
       lessonId: selectedLessonId || "",
       difficulty: "mediu",
       questionCount: 5,
+      timeLimit: 0,
     },
   });
 
@@ -185,7 +186,7 @@ export function QuizCreationForm({
                 />
               </FormControl>
               <FormDescription>
-                Selectează limita de timp pentru quiz (între 1 și 30 minute).
+                Selectează limita de timp pentru quiz (între 0 și 30 minute, 0 pentru nelimitat).
               </FormDescription>
               <FormMessage />
             </FormItem>
