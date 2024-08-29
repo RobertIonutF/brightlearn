@@ -31,7 +31,7 @@ export function QuizTakingForm({ quizId, questions, timeLimit }: QuizTakingFormP
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
 
   React.useEffect(() => {
-    if (timeRemaining === null) return;
+    if (timeRemaining === null || timeRemaining <= 0) return;
 
     const timer = setInterval(() => {
       setTimeRemaining((prev) => {
