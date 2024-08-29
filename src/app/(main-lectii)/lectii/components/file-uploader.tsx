@@ -27,6 +27,8 @@ export const FileUploader = forwardRef<HTMLInputElement, FileUploaderProps>(
       onDrop,
       accept: {
         'application/pdf': ['.pdf'],
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
+        'application/vnd.ms-powerpoint': ['.ppt'],
       },
       maxFiles: 1,
     });
@@ -61,9 +63,9 @@ export const FileUploader = forwardRef<HTMLInputElement, FileUploaderProps>(
             </Button>
           </div>
         ) : isDragActive ? (
-          <p>Glisați fișierul PDF aici...</p>
+          <p>Glisați fișierul PDF sau PPT aici...</p>
         ) : (
-          <p>Glisați și plasați un fișier PDF aici, sau faceți clic pentru a selecta un fișier</p>
+          <p>Glisați și plasați un fișier PDF sau PPT aici, sau faceți clic pentru a selecta un fișier</p>
         )}
       </div>
     );

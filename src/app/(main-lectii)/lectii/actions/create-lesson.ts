@@ -12,9 +12,7 @@ import {
 } from "firebase/storage";
 import PdfParse from "pdf-parse";
 import { PDFDocument } from "pdf-lib";
-import { openai } from "@ai-sdk/openai";
-import { z } from "zod";
-import { generateObject } from "ai";
+import { extractTextFromPPT } from "@/lib/ppt-extractor"; 
 
 export async function createLesson(formData: FormData) {
   try {
@@ -73,34 +71,43 @@ export async function createLesson(formData: FormData) {
       try {
         const fileRetrieved = await fetch(fileUrl);
 
-        //get the number of pages in the pdf
-        const pdfDoc = await PDFDocument.load(buffer);
-        const numPages = pdfDoc.getPageCount();
-
-        if (numPages > 125) {
-          throw new Error("PDF-ul are prea multe pagini (maxim 125)");
-        }
-
         if (!fileRetrieved.ok) {
           throw new Error(`Cod de stare HTTP: ${fileRetrieved.status}`);
         }
 
-        const pdfBuffer = await fileRetrieved.arrayBuffer();
-        const pdfData = Buffer.from(pdfBuffer);
-        const pdfText = await PdfParse(pdfData);
+        const fileBuffer = await fileRetrieved.arrayBuffer();
 
-        content = pdfText.text;
-        console.log("Text extras din PDF:", content);
-      } catch (pdfError) {
-        console.error("Eroare la extragerea textului din PDF:", pdfError);
-        content = `Nu s-a putut extrage textul din PDF: ${file.name}. Eroare: ${pdfError}`;
+        if (file.type === 'application/pdf') {
+          const pdfDoc = await PDFDocument.load(buffer);
+          const numPages = pdfDoc.getPageCount();
 
-        // Șterge fișierul din Firebase daca nu s-a putut extrage textul
+          if (numPages > 125) {
+            throw new Error("PDF-ul are prea multe pagini (maxim 125)");
+          }
+
+          const pdfData = Buffer.from(fileBuffer);
+          const pdfText = await PdfParse(pdfData);
+          content = pdfText.text;
+        } else if (
+          file.type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
+          file.type === 'application/vnd.ms-powerpoint'
+        ) {
+          content = await extractTextFromPPT(fileBuffer);
+        } else {
+          throw new Error("Tip de fișier neacceptat");
+        }
+
+        console.log("Text extras din fișier:", content);
+      } catch (fileError) {
+        console.error("Eroare la extragerea textului din fișier:", fileError);
+        content = `Nu s-a putut extrage textul din fișier: ${file.name}. Eroare: ${fileError}`;
+
+        // Șterge fișierul din Firebase dacă nu s-a putut extrage textul
         await deleteObject(fileRef);
         console.log("Fișier șters din Firebase:", fileUrl);
 
         throw new Error(
-          "Nu s-a putut extrage textul din PDF: " + (pdfError as Error).message
+          "Nu s-a putut extrage textul din fișier: " + (fileError as Error).message
         );
       }
     }

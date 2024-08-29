@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Brain, FileQuestion } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { auth } from "@clerk/nextjs/server";
+import { DeleteLessonButton } from '../components/delete-lesson-button';
 
 interface LessonPageProps {
   params: { id: string };
@@ -67,6 +68,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <span>Generează Quiz pentru această Lecție</span>
           </Link>
         </Button>
+        <DeleteLessonButton lessonId={lesson.id} />
       </div>
 
       <Tabs defaultValue="content">

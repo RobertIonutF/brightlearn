@@ -51,6 +51,14 @@ const lessonSchema = z.object({
       (file) => file.size <= MAX_FILE_SIZE,
       "Dimensiunea maximă a fișierului este de 100MB"
     )
+    .refine(
+      (file) => [
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/vnd.ms-powerpoint'
+      ].includes(file.type),
+      "Sunt permise doar fișiere PDF sau PPT/PPTX"
+    )
     .optional(),
 });
 
@@ -153,7 +161,7 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
         >
           <TabsList>
             <TabsTrigger value="text">Text</TabsTrigger>
-            <TabsTrigger value="file">Fișier PDF</TabsTrigger>
+            <TabsTrigger value="file">Fișier PDF sau PPT/PPTX</TabsTrigger>
           </TabsList>
           <TabsContent value="text">
             <FormField
@@ -183,7 +191,7 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
               control={form.control}
               render={({ field: { onChange, value, ...field } }) => (
                 <FormItem>
-                  <FormLabel>Încărcare fișier PDF</FormLabel>
+                  <FormLabel>Încărcare fișier PDF sau PPT/PPTX</FormLabel>
                   <FormControl>
                     <FileUploader
                       {...field}
@@ -192,7 +200,7 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
                         if (file) {
                           form.setValue(
                             "content",
-                            "PDF content will be extracted"
+                            "Conținutul va fi extras din fișier"
                           );
                         } else {
                           form.setValue("content", "");
@@ -201,7 +209,7 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
                     />
                   </FormControl>
                   <FormDescription>
-                    Încărcați un fișier PDF cu conținutul lecției
+                    Încărcați un fișier PDF sau PPT/PPTX cu conținutul lecției
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -292,9 +300,7 @@ export function CreateLessonForm({ categories, tags }: CreateLessonFormProps) {
           ) : (
             <Button
               type="submit"
-              disabled={
-                isSubmitting
-              }
+              disabled={isSubmitting}
             >
               {isSubmitting ? "Se creează..." : "Creează Lecția"}
             </Button>
