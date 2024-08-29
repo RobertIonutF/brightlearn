@@ -42,7 +42,7 @@ export async function generateMetadata(
   const lesson = await getLesson(params.id);
   
   return {
-    title: `${lesson.title} | Your App Name`,
+    title: `${lesson.title} | BrightLearn`,
     description: lesson.description,
     openGraph: {
       title: lesson.title,
@@ -85,6 +85,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <FileQuestion className="w-4 h-4" />
             <span>Generează Quiz pentru această Lecție</span>
           </Link>
+          <DeleteLessonButton lessonId={lesson.id} /> 
         </Button>
       </div>
 
