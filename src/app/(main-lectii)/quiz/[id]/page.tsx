@@ -89,7 +89,7 @@ export default async function QuizPage({ params }: QuizPageProps) {
           <p><strong>Lecție asociată:</strong> {quiz.lesson.title}</p>
           <p><strong>Număr de întrebări:</strong> {quiz._count.questions}</p>
           <p><strong>Data creării:</strong> {new Date(quiz.createdAt).toLocaleDateString('ro-RO')}</p>
-          <p><strong>Limita de timp:</strong> {quiz.timeLimit} minute</p>
+          <p><strong>Limita de timp:</strong> {quiz.timeLimit ? `${quiz.timeLimit} minute` : "Fără limită de timp"}</p>
           <p><strong>Limba:</strong> {quiz.language}</p>
         </CardContent>
       </Card>
