@@ -108,8 +108,8 @@ export default async function QuizPage({ params }: QuizPageProps) {
           </ul>
         </CardContent>
         <CardFooter>
-          In timpul quiz-ului, vei avea {quiz.timeLimit} minute pentru a completa quiz-ul.
-          De asemenea, intrebarile vor fi afisate randomizat.
+          In timpul quiz-ului, { quiz.timeLimit ? `vei avea ${quiz.timeLimit} minute pentru a completa quiz-ul.` : 'nu vei avea o limită de timp strictă.' }
+          Intrebarile sunt randomizate, iar enuntul este mereu parafrazat pentru a evita trisarea.
         </CardFooter>
       </Card>
 
