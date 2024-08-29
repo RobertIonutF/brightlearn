@@ -71,7 +71,7 @@ model Quiz {
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   questions   Question[]
   attempts    QuizAttempt[]
-  language    String? @default("romanian")
+  language    String? @default("ro")
   timeLimit   Int?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
