@@ -85,8 +85,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <FileQuestion className="w-4 h-4" />
             <span>Generează Quiz pentru această Lecție</span>
           </Link>
-          <DeleteLessonButton lessonId={lesson.id} /> 
         </Button>
+        <DeleteLessonButton lessonId={lesson.id} />
       </div>
 
       <Tabs defaultValue="content">
