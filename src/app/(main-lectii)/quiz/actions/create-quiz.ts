@@ -50,8 +50,8 @@ export async function createQuiz(data: z.infer<typeof formSchema>) {
     throw new Error("Lesson not found");
   }
 
-  if(data.questionCount > 5 || data.questionCount < 1) {
-    throw new Error("Numărul maxim de întrebări este 5, iar minimul este 1");
+  if(data.questionCount > 49 || data.questionCount < 5) {
+    throw new Error("Numărul maxim de întrebări este 50, iar minimul este 5");
   }
 
   //check if the lesson belongs to the user
