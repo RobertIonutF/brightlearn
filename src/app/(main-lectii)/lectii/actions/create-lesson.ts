@@ -43,6 +43,14 @@ export async function createLesson(formData: FormData) {
     let content = formData.get("content") as string;
     const file = formData.get("file") as File | null;
 
+    if(!categoryId) {
+      throw new Error("Categorie lipsă");
+    }
+
+    if(tagIds.length === 0) {
+      throw new Error("Tag-uri lipsă");
+    }
+
     console.log("Date primite:", {
       title,
       description,
