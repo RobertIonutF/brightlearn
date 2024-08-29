@@ -32,7 +32,7 @@ const formSchema = z.object({
   lessonId: z.string().min(1, "Selectați o lecție"),
   difficulty: z.enum(["ușor", "mediu", "dificil"]),
   timeLimit: z.number().min(0).max(30),
-  questionCount: z.number().min(1).max(30),
+  questionCount: z.number().min(5).max(50),
 });
 
 
@@ -181,8 +181,6 @@ export function QuizCreationForm({
                   type="number"
                   {...field}
                   onChange={(e) => field.onChange(parseInt(e.target.value))}
-                  min={0}
-                  max={30}
                 />
               </FormControl>
               <FormDescription>
@@ -203,12 +201,10 @@ export function QuizCreationForm({
                   type="number"
                   {...field}
                   onChange={(e) => field.onChange(parseInt(e.target.value))}
-                  min={1}
-                  max={5}
                 />
               </FormControl>
               <FormDescription>
-                Selectează numărul de întrebări pentru quiz (între 1 și 5).
+                Selectează numărul de întrebări pentru quiz (între 5 și 50).
               </FormDescription>
               <FormMessage />
             </FormItem>

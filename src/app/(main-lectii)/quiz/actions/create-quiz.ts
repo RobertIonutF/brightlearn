@@ -23,7 +23,7 @@ const formSchema = z.object({
   language: z.enum(["ro", "en"]),
   difficulty: z.enum(['ușor', 'mediu', 'dificil']),
   timeLimit: z.number().min(0).max(30),
-  questionCount: z.number().min(1).max(30),
+  questionCount: z.number().min(1).max(50),
 });
 
 export async function createQuiz(data: z.infer<typeof formSchema>) {
