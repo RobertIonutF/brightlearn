@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Metadata, ResolvingMetadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DeleteQuizButton } from '../components/delete-quiz-button';
 import { Play, ArrowLeft } from "lucide-react";
@@ -89,6 +89,8 @@ export default async function QuizPage({ params }: QuizPageProps) {
           <p><strong>Lecție asociată:</strong> {quiz.lesson.title}</p>
           <p><strong>Număr de întrebări:</strong> {quiz._count.questions}</p>
           <p><strong>Data creării:</strong> {new Date(quiz.createdAt).toLocaleDateString('ro-RO')}</p>
+          <p><strong>Limita de timp:</strong> {quiz.timeLimit} minute</p>
+          <p><strong>Limba:</strong> {quiz.language}</p>
         </CardContent>
       </Card>
 
@@ -105,6 +107,10 @@ export default async function QuizPage({ params }: QuizPageProps) {
             ))}
           </ul>
         </CardContent>
+        <CardFooter>
+          In timpul quiz-ului, vei avea {quiz.timeLimit} minute pentru a completa quiz-ul.
+          De asemenea, intrebarile vor fi afisate randomizat.
+        </CardFooter>
       </Card>
 
       <div className="flex justify-between">
