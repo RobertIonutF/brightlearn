@@ -28,6 +28,7 @@ import { createQuiz } from "../actions/create-quiz";
 import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
+  title: z.string().min(1, "Titlul este obligatoriu"),
   language: z.enum(["ro", "en"]),
   lessonId: z.string().min(1, "Selectați o lecție"),
   difficulty: z.enum(["ușor", "mediu", "dificil"]),
@@ -121,6 +122,22 @@ export function QuizCreationForm({
             )}
           />
         )}
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Titlu</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormDescription> 
+                Introduceți un titlu pentru quiz.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="language"

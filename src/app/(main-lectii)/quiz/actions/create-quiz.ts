@@ -19,6 +19,7 @@ const quizSchema = z.object({
 });
 
 const formSchema = z.object({
+  title: z.string().min(1, "Titlul este obligatoriu"),
   lessonId: z.string(),
   language: z.enum(["ro", "en"]),
   difficulty: z.enum(['ușor', 'mediu', 'dificil']),
@@ -78,7 +79,7 @@ export async function createQuiz(data: z.infer<typeof formSchema>) {
 
     const quiz = await prisma.quiz.create({
       data: {
-        title: `Quiz pentru ${lesson.title}`,
+        title: data?.title,
         lessonId: lesson.id,
         userId: user.id,
         language: data.language,
