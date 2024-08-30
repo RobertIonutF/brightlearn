@@ -18,7 +18,7 @@ export function AIChat({ lessonContent, lessonId }: AIChatProps) {
   const initialSystemMessage: Message = {
     id: nanoid(),
     role: 'system',
-    content: `Sunteți un asistent AI pentru învățarea medicală. Bazați-vă răspunsurile pe următorul conținut al lecției: ${lessonContent}`
+    content: `Sunteți un asistent AI pentru învățare. Bazați-vă doar pe continutul lectiei, nu halucina: ${lessonContent}`
   };
 
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
